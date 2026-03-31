@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="900" viewBox="0 0 1400 900">
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 Z" fill="#1f2937"/>
+    </marker>
+    <style>
+      .bg { fill: #0b1220; }
+      .box { fill: #111c33; stroke: #93c5fd; stroke-width: 2; }
+      .title { font: 700 22px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill: #e5e7eb; }
+      .label { font: 600 16px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill: #e5e7eb; }
+      .meta { font: 400 13px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; fill: #cbd5e1; }
+      .edge-cascade { stroke: #22c55e; stroke-width: 3; marker-end: url(#arrow); }
+      .edge-fk { stroke: #f59e0b; stroke-width: 3; marker-end: url(#arrow); }
+      .edge-text { fill: #cbd5e1; font: 600 12px ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1400" height="900"/>
+  <text x="40" y="55" class="title">Go DDD - Table Relationships</text>
+
+  <!-- Left/core chain -->
+  <!-- users -->
+  <rect class="box" x="40" y="90" width="220" height="70" rx="10"/>
+  <text x="55" y="125" class="label">users</text>
+  <text x="55" y="148" class="meta">id</text>
+
+  <!-- workspaces -->
+  <rect class="box" x="300" y="90" width="260" height="70" rx="10"/>
+  <text x="315" y="125" class="label">workspaces</text>
+  <text x="315" y="148" class="meta">owner_id -> users.id</text>
+
+  <!-- workspace_members -->
+  <rect class="box" x="590" y="90" width="290" height="70" rx="10"/>
+  <text x="605" y="125" class="label">workspace_members</text>
+  <text x="605" y="148" class="meta">workspace_id, user_id</text>
+
+  <!-- projects -->
+  <rect class="box" x="920" y="90" width="260" height="70" rx="10"/>
+  <text x="935" y="125" class="label">projects</text>
+  <text x="935" y="148" class="meta">workspace_id -> workspaces.id</text>
+
+  <!-- tasks -->
+  <rect class="box" x="880" y="220" width="300" height="70" rx="10"/>
+  <text x="895" y="255" class="label">tasks</text>
+  <text x="895" y="278" class="meta">project_id -> projects.id</text>
+
+  <!-- tasks sub/children to other entities -->
+  <rect class="box" x="260" y="420" width="220" height="70" rx="10"/>
+  <text x="275" y="455" class="label">tags</text>
+  <text x="275" y="478" class="meta">workspace_id</text>
+
+  <rect class="box" x="500" y="420" width="200" height="70" rx="10"/>
+  <text x="515" y="455" class="label">task_tags</text>
+  <text x="515" y="478" class="meta">(task_id, tag_id)</text>
+
+  <rect class="box" x="720" y="420" width="230" height="70" rx="10"/>
+  <text x="735" y="455" class="label">comments</text>
+  <text x="735" y="478" class="meta">task_id</text>
+
+  <rect class="box" x="980" y="420" width="260" height="70" rx="10"/>
+  <text x="995" y="455" class="label">reminders</text>
+  <text x="995" y="478" class="meta">task_id</text>
+
+  <rect class="box" x="1260" y="420" width="120" height="70" rx="10"/>
+  <text x="1275" y="455" class="label">activity_logs</text>
+  <text x="1275" y="478" class="meta">task_id</text>
+
+  <!-- RBAC cluster -->
+  <rect class="box" x="80" y="640" width="210" height="70" rx="10"/>
+  <text x="95" y="675" class="label">roles</text>
+  <text x="95" y="698" class="meta">id</text>
+
+  <rect class="box" x="320" y="640" width="240" height="70" rx="10"/>
+  <text x="335" y="675" class="label">permissions</text>
+  <text x="335" y="698" class="meta">id</text>
+
+  <rect class="box" x="600" y="640" width="270" height="70" rx="10"/>
+  <text x="615" y="675" class="label">role_permissions</text>
+  <text x="615" y="698" class="meta">(role_id, permission_id)</text>
+
+  <rect class="box" x="920" y="640" width="320" height="70" rx="10"/>
+  <text x="935" y="675" class="label">user_roles</text>
+  <text x="935" y="698" class="meta">(workspace_id, user_id, role_id)</text>
+
+  <!-- Edges: core chain -->
+  <!-- users -> workspaces (owner_id) -->
+  <line class="edge-fk" x1="260" y1="125" x2="300" y2="125" />
+  <text x="275" y="115" class="edge-text">FK</text>
+
+  <!-- workspaces -> workspace_members (workspace_id CASCADE) -->
+  <line class="edge-cascade" x1="560" y1="125" x2="590" y2="125" />
+  <text x="565" y="115" class="edge-text">CASCADE</text>
+
+  <!-- users -> workspace_members (user_id CASCADE) -->
+  <line class="edge-cascade" x1="170" y1="160" x2="590" y2="155" />
+  <text x="360" y="176" class="edge-text">CASCADE</text>
+
+  <!-- workspaces -> projects -->
+  <line class="edge-cascade" x1="560" y1="125" x2="920" y2="125" />
+  <text x="720" y="110" class="edge-text">CASCADE</text>
+
+  <!-- users -> projects (created_by FK) -->
+  <line class="edge-fk" x1="260" y1="125" x2="920" y2="145" />
+  <text x="640" y="165" class="edge-text">FK</text>
+
+  <!-- projects -> tasks -->
+  <line class="edge-cascade" x1="1050" y1="160" x2="1030" y2="220" />
+  <text x="1020" y="200" class="edge-text">CASCADE</text>
+
+  <!-- tasks -> tasks (parent_task_id CASCADE) -->
+  <path d="M1030 290 C1030 320 1030 360 1030 390" fill="none" stroke="#22c55e" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="1045" y="355" class="edge-text">CASCADE</text>
+
+  <!-- tasks -> tags via task_tags -->
+  <line class="edge-cascade" x1="880" y1="255" x2="500" y2="455" />
+  <text x="720" y="320" class="edge-text">task_tags.task_id</text>
+
+  <line class="edge-cascade" x1="500" y1="455" x2="260" y2="455" />
+  <text x="360" y="470" class="edge-text">CASCADE</text>
+
+  <line class="edge-cascade" x1="260" y1="455" x2="260" y2="455" />
+
+  <!-- workspaces -> tags (workspace_id CASCADE) -->
+  <line class="edge-cascade" x1="560" y1="125" x2="260" y2="420" />
+  <text x="395" y="290" class="edge-text">CASCADE</text>
+
+  <!-- tasks -> comments (task_id CASCADE) -->
+  <line class="edge-cascade" x1="1030" y1="290" x2="720" y2="420" />
+  <text x="860" y="370" class="edge-text">CASCADE</text>
+
+  <!-- users -> comments (user_id FK) -->
+  <line class="edge-fk" x1="260" y1="125" x2="720" y2="430" />
+  <text x="510" y="360" class="edge-text">FK</text>
+
+  <!-- tasks -> reminders (task_id CASCADE) -->
+  <line class="edge-cascade" x1="1030" y1="290" x2="980" y2="420" />
+  <text x="1010" y="360" class="edge-text">CASCADE</text>
+
+  <!-- tasks -> activity_logs (task_id CASCADE) -->
+  <line class="edge-cascade" x1="1030" y1="290" x2="1260" y2="420" />
+  <text x="1180" y="360" class="edge-text">CASCADE</text>
+
+  <!-- users -> activity_logs (user_id FK) -->
+  <line class="edge-fk" x1="260" y1="125" x2="1260" y2="440" />
+  <text x="760" y="240" class="edge-text">FK</text>
+
+  <!-- RBAC edges -->
+  <!-- role_permissions -> roles -->
+  <line class="edge-cascade" x1="735" y1="710" x2="185" y2="710" />
+  <text x="420" y="695" class="edge-text">CASCADE</text>
+
+  <!-- role_permissions -> permissions -->
+  <line class="edge-cascade" x1="735" y1="710" x2="440" y2="710" />
+  <text x="550" y="695" class="edge-text">CASCADE</text>
+
+  <!-- user_roles -> workspace_members (workspace_id,user_id CASCADE) -->
+  <line class="edge-cascade" x1="920" y1="675" x2="740" y2="160" />
+  <text x="835" y="505" class="edge-text">CASCADE</text>
+
+  <!-- user_roles -> roles (role_id CASCADE) -->
+  <line class="edge-cascade" x1="1070" y1="675" x2="290" y2="675" />
+  <text x="710" y="665" class="edge-text">CASCADE</text>
+
+</svg>
+

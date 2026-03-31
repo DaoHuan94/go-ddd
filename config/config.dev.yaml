@@ -1,0 +1,6 @@
+app:
+  name: go-ddd
+  port: 2026
+
+database:
+  db_url: postgres://app:app@localhost:5555/app?sslmode=disable

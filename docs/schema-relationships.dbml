@@ -1,0 +1,199 @@
+// dbdiagram.io (DBML) schema for Go DDD
+// Tables and relationships derived from migrations/*.sql
+
+Table users {
+  id BIGSERIAL [pk]
+  email VARCHAR(255) [not null, unique]
+  password_hash TEXT
+  name VARCHAR(255)
+  avatar_url TEXT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table workspaces {
+  id BIGSERIAL [pk]
+  name VARCHAR(255)
+  owner_id BIGINT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table workspace_members {
+  id BIGSERIAL [pk]
+  workspace_id BIGINT
+  user_id BIGINT
+  created_at TIMESTAMP
+
+  Indexes {
+    (workspace_id, user_id) [unique]
+  }
+}
+
+Table projects {
+  id BIGSERIAL [pk]
+  workspace_id BIGINT
+  name VARCHAR(255)
+  description TEXT
+  created_by BIGINT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table tasks {
+  id BIGSERIAL [pk]
+  project_id BIGINT
+  parent_task_id BIGINT
+
+  title VARCHAR(255) [not null]
+  description TEXT
+  status VARCHAR(50)
+  priority VARCHAR(50)
+
+  assigned_to BIGINT
+  created_by BIGINT
+  due_date TIMESTAMP
+  start_date TIMESTAMP
+  position INT
+
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table tags {
+  id BIGSERIAL [pk]
+  workspace_id BIGINT
+  name VARCHAR(100)
+}
+
+Table task_tags {
+  task_id BIGINT
+  tag_id BIGINT
+
+  Indexes {
+    (task_id, tag_id) [pk]
+  }
+}
+
+Table comments {
+  id BIGSERIAL [pk]
+  task_id BIGINT
+  user_id BIGINT
+  content TEXT
+  created_at TIMESTAMP
+}
+
+Table reminders {
+  id BIGSERIAL [pk]
+  task_id BIGINT
+  remind_at TIMESTAMP
+  type VARCHAR(50)
+  created_at TIMESTAMP
+}
+
+Table activity_logs {
+  id BIGSERIAL [pk]
+  task_id BIGINT
+  user_id BIGINT
+  action VARCHAR(100)
+  metadata JSONB
+  created_at TIMESTAMP
+}
+
+// RBAC (image-style)
+Table roles {
+  id BIGSERIAL [pk]
+  name VARCHAR(50) [not null, unique]
+  description TEXT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table permissions {
+  id BIGSERIAL [pk]
+  name VARCHAR(100) [not null, unique]
+  description TEXT
+  created_at TIMESTAMP
+  updated_at TIMESTAMP
+}
+
+Table role_permissions {
+  role_id BIGINT
+  permission_id BIGINT
+  created_at TIMESTAMP
+
+  Indexes {
+    (role_id, permission_id) [pk]
+  }
+}
+
+Table user_roles {
+  workspace_id BIGINT
+  user_id BIGINT
+  role_id BIGINT
+  created_at TIMESTAMP
+
+  Indexes {
+    (workspace_id, user_id, role_id) [pk]
+  }
+}
+
+// ---- References (FK relationships) ----
+
+Ref: workspaces.owner_id > users.id
+
+Ref: workspace_members.workspace_id > workspaces.id
+[delete: CASCADE]
+
+Ref: workspace_members.user_id > users.id
+[delete: CASCADE]
+
+Ref: projects.workspace_id > workspaces.id
+[delete: CASCADE]
+
+Ref: projects.created_by > users.id
+
+Ref: tasks.project_id > projects.id
+[delete: CASCADE]
+
+Ref: tasks.parent_task_id > tasks.id
+[delete: CASCADE]
+
+Ref: tasks.assigned_to > users.id
+
+Ref: tasks.created_by > users.id
+
+Ref: tags.workspace_id > workspaces.id
+[delete: CASCADE]
+
+Ref: task_tags.task_id > tasks.id
+[delete: CASCADE]
+
+Ref: task_tags.tag_id > tags.id
+[delete: CASCADE]
+
+Ref: comments.task_id > tasks.id
+[delete: CASCADE]
+
+Ref: comments.user_id > users.id
+
+Ref: reminders.task_id > tasks.id
+[delete: CASCADE]
+
+Ref: activity_logs.task_id > tasks.id
+[delete: CASCADE]
+
+Ref: activity_logs.user_id > users.id
+
+Ref: role_permissions.role_id > roles.id
+[delete: CASCADE]
+
+Ref: role_permissions.permission_id > permissions.id
+[delete: CASCADE]
+
+Ref: user_roles.workspace_id, user_roles.user_id > workspace_members.workspace_id, workspace_members.user_id
+[delete: CASCADE]
+
+Ref: user_roles.role_id > roles.id
+[delete: CASCADE]
+
