@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"go-ddd/adapter/httpapi"
 	"go-ddd/adapter/httpapi/middleware"
-	authUsecase "go-ddd/application/usecases/auth"
+	loginUsecase "go-ddd/application/usecases/auth/login"
+	logoutUsecase "go-ddd/application/usecases/auth/logout"
+	refreshUsecase "go-ddd/application/usecases/auth/refresh"
+	registerUsecase "go-ddd/application/usecases/auth/register"
 	"go-ddd/infra/config"
 	"go-ddd/infra/database"
 	"go-ddd/infra/database/repository_impl"
@@ -49,13 +52,28 @@ func main() {
 	}
 
 	authRepo := repository_impl.NewPostgresAuthRepository(db)
-	authUC := authUsecase.NewAuthUsecase(
+	loginUsecase := loginUsecase.NewUsecase(
+		authRepo,
+		authAccessCfg,
+		time.Duration(refreshTTLSeconds)*time.Second,
+	)
+	logoutUsecase := logoutUsecase.NewUsecase(
+		authRepo,
+		authAccessCfg,
+		time.Duration(refreshTTLSeconds)*time.Second,
+	)
+	refreshUsecase := refreshUsecase.NewUsecase(
+		authRepo,
+		authAccessCfg,
+		time.Duration(refreshTTLSeconds)*time.Second,
+	)
+	registerUsecase := registerUsecase.NewUsecase(
 		authRepo,
 		authAccessCfg,
 		time.Duration(refreshTTLSeconds)*time.Second,
 	)
 
-	httpapi.RegisterRoutes(e, authUC)
+	httpapi.RegisterRoutes(e, loginUsecase, logoutUsecase, refreshUsecase, registerUsecase)
 
 	serverErr := startHTTPServer(e, cfg.App.Port)
 	if !waitForSignalOrServerError(serverErr) {

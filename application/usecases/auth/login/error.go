@@ -1,8 +1,7 @@
 package login
 
-import authtypes "go-ddd/application/usecases/auth/types"
+import "errors"
 
 var (
-	ErrInvalidCredentials = authtypes.ErrInvalidCredentials
+	ErrInvalidCredentials = errors.New("invalid credentials")
 )
-

@@ -9,16 +9,25 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"go-ddd/adapter/httpapi/middleware"
-	authusecase "go-ddd/application/usecases/auth"
+	loginUsecase "go-ddd/application/usecases/auth/login"
+	logoutUsecase "go-ddd/application/usecases/auth/logout"
+	refreshUsecase "go-ddd/application/usecases/auth/refresh"
+	registerUsecase "go-ddd/application/usecases/auth/register"
 )
 
 type Server struct {
-	echo     *echo.Echo
-	authCtrl authusecase.AuthUsecase
+	echo            *echo.Echo
+	loginUsecase    loginUsecase.Usecase
+	logoutUsecase   logoutUsecase.Usecase
+	refreshUsecase  refreshUsecase.Usecase
+	registerUsecase registerUsecase.Usecase
 }
 
 func NewServer(
-	authCtrl authusecase.AuthUsecase,
+	loginUsecase loginUsecase.Usecase,
+	logoutUsecase logoutUsecase.Usecase,
+	refreshUsecase refreshUsecase.Usecase,
+	registerUsecase registerUsecase.Usecase,
 ) *Server {
 	e := echo.New()
 	e.HideBanner = true
@@ -27,13 +36,16 @@ func NewServer(
 	e.Use(middleware.RequestLogger())
 
 	return &Server{
-		echo:     e,
-		authCtrl: authCtrl,
+		echo:            e,
+		loginUsecase:    loginUsecase,
+		logoutUsecase:   logoutUsecase,
+		refreshUsecase:  refreshUsecase,
+		registerUsecase: registerUsecase,
 	}
 }
 
 func (s *Server) Register() {
-	RegisterRoutes(s.echo, s.authCtrl)
+	RegisterRoutes(s.echo, s.loginUsecase, s.logoutUsecase, s.refreshUsecase, s.registerUsecase)
 }
 
 func (s *Server) Start(ctx context.Context) error {

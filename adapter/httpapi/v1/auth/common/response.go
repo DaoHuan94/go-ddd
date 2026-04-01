@@ -6,7 +6,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	authUsecase "go-ddd/application/usecases/auth"
+	loginUsecase "go-ddd/application/usecases/auth/login"
+	refreshUsecase "go-ddd/application/usecases/auth/refresh"
+	registerUsecase "go-ddd/application/usecases/auth/register"
 )
 
 type TokensResponseData struct {
@@ -26,13 +28,13 @@ type ErrorResponse struct {
 func HandleAuthError(c echo.Context, err error) error {
 	// Map usecase errors to HTTP status codes.
 	switch {
-	case errors.Is(err, authUsecase.ErrEmailAlreadyExists):
+	case errors.Is(err, registerUsecase.ErrEmailAlreadyExists):
 		return c.JSON(http.StatusConflict, ErrorResponse{Message: err.Error()})
-	case errors.Is(err, authUsecase.ErrInvalidCredentials):
+	case errors.Is(err, loginUsecase.ErrInvalidCredentials):
 		return c.JSON(http.StatusUnauthorized, ErrorResponse{Message: err.Error()})
-	case errors.Is(err, authUsecase.ErrRefreshTokenExpired):
+	case errors.Is(err, refreshUsecase.ErrRefreshTokenExpired):
 		return c.JSON(http.StatusUnauthorized, ErrorResponse{Message: err.Error()})
-	case errors.Is(err, authUsecase.ErrRefreshTokenInvalid):
+	case errors.Is(err, refreshUsecase.ErrRefreshTokenInvalid):
 		return c.JSON(http.StatusUnauthorized, ErrorResponse{Message: err.Error()})
 	default:
 		return c.JSON(http.StatusInternalServerError, ErrorResponse{Message: "internal server error"})

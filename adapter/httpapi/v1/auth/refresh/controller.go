@@ -7,14 +7,14 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"go-ddd/adapter/httpapi/v1/auth/common"
-	authUsecase "go-ddd/application/usecases/auth"
+	refreshUsecase "go-ddd/application/usecases/auth/refresh"
 )
 
 type Controller struct {
-	usecase authUsecase.AuthUsecase
+	usecase refreshUsecase.Usecase
 }
 
-func NewController(usecase authUsecase.AuthUsecase) *Controller {
+func NewController(usecase refreshUsecase.Usecase) *Controller {
 	return &Controller{usecase: usecase}
 }
 
@@ -28,7 +28,7 @@ func (ctl *Controller) Handle(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.ErrorResponse{Message: "invalid request"})
 	}
 
-	tokens, err := ctl.usecase.Refresh(context.Background(), authUsecase.RefreshArg{
+	tokens, err := ctl.usecase.Execute(context.Background(), refreshUsecase.RefreshArg{
 		RefreshToken: req.RefreshToken,
 	})
 	if err != nil {

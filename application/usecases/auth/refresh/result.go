@@ -1,6 +1,6 @@
 package refresh
 
-import authtypes "go-ddd/application/usecases/auth/types"
-
-type TokensResult = authtypes.TokensResult
-
+type TokensResult struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+}

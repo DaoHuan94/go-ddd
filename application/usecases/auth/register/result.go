@@ -1,4 +1,4 @@
-package types
+package register
 
 type TokensResult struct {
 	AccessToken  string `json:"access_token"`

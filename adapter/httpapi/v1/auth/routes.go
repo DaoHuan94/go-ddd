@@ -23,8 +23,8 @@ func RegisterAuthRoutesV1(
 ) {
 	grp := g.Group("/auth")
 
-	grp.POST("/register", register.NewController(registerUsecase.Usecase).Handle)
-	grp.POST("/login", login.NewController(loginUsecase.Usecase).Handle)
-	grp.POST("/refresh", refresh.NewController(refreshUsecase.Usecase).Handle)
-	grp.POST("/logout", logout.NewController(logoutUsecase.Usecase).Handle)
+	grp.POST("/register", register.NewController(registerUsecase).Handle)
+	grp.POST("/login", login.NewController(loginUsecase).Handle)
+	grp.POST("/refresh", refresh.NewController(refreshUsecase).Handle)
+	grp.POST("/logout", logout.NewController(logoutUsecase).Handle)
 }

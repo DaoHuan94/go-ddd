@@ -1,6 +1,5 @@
 package refresh
 
-import authtypes "go-ddd/application/usecases/auth/types"
-
-type RefreshArg = authtypes.RefreshArg
-
+type RefreshArg struct {
+	RefreshToken string `json:"refresh_token"`
+}

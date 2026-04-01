@@ -1,4 +1,7 @@
 package logout
 
-// logout doesn't currently return domain errors; this file exists for symmetry.
+import "errors"
 
+var (
+	ErrLogoutFailed = errors.New("logout failed")
+)

@@ -1,6 +1,5 @@
 package logout
 
-import authtypes "go-ddd/application/usecases/auth/types"
-
-type LogoutArg = authtypes.LogoutArg
-
+type LogoutArg struct {
+	RefreshToken string `json:"refresh_token"`
+}

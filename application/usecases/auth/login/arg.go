@@ -1,6 +1,7 @@
 package login
 
-import authtypes "go-ddd/application/usecases/auth/types"
-
-type LoginArg = authtypes.LoginArg
+type LoginArg struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
 

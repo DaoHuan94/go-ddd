@@ -29,7 +29,7 @@ func (ctl *Controller) Handle(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.ErrorResponse{Message: "invalid request"})
 	}
 
-	tokens, err := ctl.usecase.Register(context.Background(), registerUsecase.RegisterArg{
+	tokens, err := ctl.usecase.Execute(context.Background(), registerUsecase.RegisterArg{
 		Email:     req.Email,
 		Password:  req.Password,
 		Name:      req.Name,

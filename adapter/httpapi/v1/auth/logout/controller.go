@@ -7,14 +7,14 @@ import (
 	"github.com/labstack/echo/v4"
 
 	"go-ddd/adapter/httpapi/v1/auth/common"
-	authUsecase "go-ddd/application/usecases/auth"
+	logoutUsecase "go-ddd/application/usecases/auth/logout"
 )
 
 type Controller struct {
-	usecase authUsecase.AuthUsecase
+	usecase logoutUsecase.Usecase
 }
 
-func NewController(usecase authUsecase.AuthUsecase) *Controller {
+func NewController(usecase logoutUsecase.Usecase) *Controller {
 	return &Controller{usecase: usecase}
 }
 
@@ -28,7 +28,7 @@ func (ctl *Controller) Handle(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, common.ErrorResponse{Message: "invalid request"})
 	}
 
-	if err := ctl.usecase.Logout(context.Background(), authUsecase.LogoutArg{
+	if err := ctl.usecase.Execute(context.Background(), logoutUsecase.LogoutArg{
 		RefreshToken: req.RefreshToken,
 	}); err != nil {
 		return common.HandleAuthError(c, err)
