@@ -4,3 +4,9 @@ app:
 
 database:
   db_url: postgres://app:app@localhost:5555/app?sslmode=disable
+
+redis:
+  host: localhost
+  port: 6379
+  password:
+  db: 0

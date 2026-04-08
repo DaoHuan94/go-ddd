@@ -14,6 +14,7 @@ import (
 	"go-ddd/infra/database"
 	"go-ddd/infra/database/repository_impl"
 	"go-ddd/infra/logger"
+	"go-ddd/infra/redis"
 	"go-ddd/infra/security"
 	"log"
 	"net/http"
@@ -34,11 +35,14 @@ func main() {
 
 	cfg := mustLoadConfig()
 	db := mustConnectDB(cfg)
+	redisClient := redis.NewRedisClient(context.Background(), *cfg)
 
 	e := echo.New()
 	e.Use(middleware.LoggerMiddleware(logger.Log))
 	e.Use(middleware.Recover())
 	e.Use(middleware.RequestLogger())
+	e.Use(middleware.IdempotencyMiddleware(redisClient.Rdb))
+	// e.Use(middleware.LockMiddleware(redisClient.Rdb))
 
 	// Wire usecases + routes.
 	accessSecret := getenvDefault("JWT_ACCESS_SECRET", "dev-access-secret-change-me")
